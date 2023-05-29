@@ -1,0 +1,94 @@
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from tensorflow import keras
+import numpy as np
+
+
+(x_train, y_train), (x_test, y_test) = keras.datasets.fashion_mnist.load_data()
+
+
+plt.imshow(x_train[1])
+
+
+plt.imshow(x_train[6])
+
+
+plt.imshow(x_train[0])
+
+
+x_train = x_train.astype('float32') / 255.0
+x_test = x_test.astype('float32') / 255.0
+
+
+x_train = x_train.reshape(-1, 28, 28, 1)
+x_test = x_test.reshape(-1, 28, 28, 1)
+
+
+x_train.shape
+
+
+x_test.shape
+
+
+y_train.shape
+
+
+y_test.shape
+
+
+model = keras.Sequential([
+    keras.layers.Conv2D(32, (3,3), activation="relu", input_shape=(28,28,1)),
+    keras.layers.MaxPooling2D((2,2)),
+    keras.layers.Dropout(0.25),
+    keras.layers.Conv2D(64, (3,3), activation="relu"),
+    keras.layers.MaxPooling2D((2,2)),
+    keras.layers.Dropout(0.25),
+    keras.layers.Conv2D(128, (3,3), activation="relu"),
+    keras.layers.Flatten(),
+    keras.layers.Dense(10, activation="softmax")
+])
+
+
+model.summary()
+
+
+model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=['accuracy'])
+history = model.fit(x_train, y_train, epochs = 20, validation_data = (x_test, y_test))
+
+
+test_loss, test_acc = model.evaluate(x_test, y_test)
+
+
+print("Test accuracy:", test_acc)
+
+
+
+
+
+
+
+Classification is a fundamental task in machine learning and data analysis that involves 
+categorizing or assigning predefined labels or classes to input data based on patterns 
+and characteristics. 
+The goal of classification is to build a model that can accurately predict the class 
+of new, unseen data points based on the patterns it has learned from the training data.
+
+CNN stands for Convolutional Neural Network, which is a specialized type of deep neural 
+network commonly used for analyzing visual data, such as images or videos. 
+CNNs are designed to automatically learn and extract hierarchical representations of 
+the input data by employing convolutional layers, pooling layers, and fully connected 
+layers.
+
+Classification using CNNs involves training a Convolutional Neural Network to classify 
+input data into different classes or categories. 
+The CNN learns to extract relevant features from the input data and make predictions 
+based on those features. 
+
+
+The MNIST dataset is a widely used benchmark dataset in the field of machine learning 
+and computer vision. 
+It consists of a large collection of handwritten digits, from 0 to 9, in the form of 
+grayscale images. 
+The MNIST dataset is commonly used for tasks such as image classification and digit 
+recognition.
+
