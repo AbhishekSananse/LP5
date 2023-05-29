@@ -1,0 +1,119 @@
+#include <iostream>
+#include <vector>
+#include <omp.h>
+#include <climits>
+using namespace std;
+void min_reduction(vector<int> &arr)
+{
+    int min_value = INT_MAX;
+#pragma omp parallel for reduction(min : min_value)
+    for (int i = 0; i < arr.size(); i++)
+    {
+        if (arr[i] < min_value)
+        {
+            min_value = arr[i];
+        }
+    }
+    cout << "Minimum value: " << min_value << endl;
+}
+void max_reduction(vector<int> &arr)
+{
+    int max_value = INT_MIN;
+#pragma omp parallel for reduction(max : max_value)
+    for (int i = 0; i < arr.size(); i++)
+    {
+        if (arr[i] > max_value)
+        {
+            max_value = arr[i];
+        }
+    }
+    cout << "Maximum value: " << max_value << endl;
+}
+void sum_reduction(vector<int> &arr)
+{
+    int sum = 0;
+#pragma omp parallel for reduction(+ : sum)
+    for (int i = 0; i < arr.size(); i++)
+    {
+        sum += arr[i];
+    }
+    cout << "Sum: " << sum << endl;
+}
+void average_reduction(vector<int> &arr)
+{
+    int sum = 0;
+#pragma omp parallel for reduction(+ : sum)
+    for (int i = 0; i < arr.size(); i++)
+    {
+        sum += arr[i];
+    }
+    cout << "Average: " << (double)sum / arr.size() << endl;
+}
+int main()
+{
+    vector<int> arr;
+    arr.push_back(5);
+    arr.push_back(2);
+    arr.push_back(9);
+    arr.push_back(1);
+    arr.push_back(7);
+    arr.push_back(6);
+    arr.push_back(8);
+    arr.push_back(3);
+    arr.push_back(4);
+    min_reduction(arr);
+    max_reduction(arr);
+    sum_reduction(arr);
+    average_reduction(arr);
+}
+
+
+
+
+
+
+
+The given code demonstrates the use of OpenMP reduction clauses to perform common reduction 
+operations on a vector of integers. Here's a breakdown of the code:
+
+1. The necessary header files, including `<iostream>`, `<vector>`, `<omp.h>`, and `<climits>`
+, are included.
+
+2. The `min_reduction` function is defined to find the minimum value in the vector. 
+It takes a reference to the vector `arr` as an argument.
+
+3. The variable `min_value` is initialized with the maximum value of `int` using `INT_MAX`.
+
+4. The `#pragma omp parallel for reduction(min : min_value)` directive is used to parallelize 
+the execution of the loop and perform the minimum value reduction operation.
+
+5. Inside the loop, each thread independently compares its respective element with the current 
+minimum value and updates `min_value` if a smaller value is found.
+
+6. After the loop, the minimum value is printed.
+
+7. Similarly, the `max_reduction` function is defined to find the maximum value in the vector. 
+It follows the same logic as the `min_reduction` function but uses `INT_MIN` to initialize 
+`max_value` and performs the reduction operation using `reduction(max : max_value)`.
+
+8. The `sum_reduction` function is defined to calculate the sum of all elements in the vector. 
+It uses `sum` as the variable to store the partial sums for each thread and performs the 
+reduction operation using `reduction(+ : sum)`.
+
+9. The `average_reduction` function is defined to calculate the average of all elements in the vector.
+ It follows the same logic as the `sum_reduction` function but divides the final sum by the size of 
+the vector to obtain the average.
+
+10. In the `main` function, a vector of integers `arr` is initialized with some values.
+
+11. The `min_reduction`, `max_reduction`, `sum_reduction`, and `average_reduction` functions are 
+called with the `arr` vector as an argument to perform the respective reduction operations.
+
+12. The results of the reduction operations (minimum value, maximum value, sum, and average) are printed.
+
+13. Finally, the `main` function returns 0, indicating successful execution.
+
+The OpenMP reduction clauses provide a convenient way to perform reduction operations in parallel, 
+allowing for potential performance improvements when dealing with large data sets. 
+Each thread works on a subset of the data and updates a partial result, which is then combined 
+at the end to obtain the final result.

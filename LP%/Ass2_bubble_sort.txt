@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+#include <omp.h>
+void parallelBubbleSort(std::vector<int>& arr) {
+ int n = arr.size();
+ bool swapped;
+ #pragma omp parallel
+ {
+ do {
+ swapped = false;
+ #pragma omp for
+ for (int i = 0; i < n - 1; i++) {
+ if (arr[i] > arr[i + 1]) {
+ std::swap(arr[i], arr[i + 1]);
+ swapped = true;
+ }
+ }
+ } while (swapped);
+ }
+}
+int main() {
+ std::vector<int> numbers = {5, 2, 8, 12, 3};
+ std::cout << "Before sorting: ";
+ for (int num : numbers) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl;
+ parallelBubbleSort(numbers);
+ std::cout << "After sorting: ";
+ for (int num : numbers) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl;
+ return 0;
+}
+
+
+
+
+
+
+
+
+The provided code implements a parallel version of the Bubble Sort algorithm using 
+OpenMP for parallelization. Here's a breakdown of the code:
+
+1. The necessary header files, including `<iostream>`, `<vector>`, and `<omp.h>`, 
+are included.
+
+2. The `parallelBubbleSort` function is defined to perform the parallel version of
+the Bubble Sort algorithm. It takes a reference to a vector of integers `arr` as 
+an argument.
+
+3. The size of the vector `arr` is stored in the variable `n`.
+
+4. The outer `#pragma omp parallel` directive is used to parallelize the execution
+ of the following block.
+
+5. The `do-while` loop runs until no swaps are made during an iteration, 
+indicating that the array is sorted.
+
+6. The boolean variable `swapped` is set to `false` at the beginning of each iteration.
+
+7. The `#pragma omp for` directive is used to distribute the iterations of the inner 
+loop among multiple threads. Each thread executes a subset of the loop iterations.
+
+8. The inner loop iterates over the elements of the vector from index 0 to `n - 1`. 
+If an element is greater than the element next to it, a swap is performed using `std::swap`.
+
+9. If a swap occurs during an iteration, the `swapped` variable is set to `true`.
+
+10. The `do-while` loop continues until no swaps are made, indicating that the array is sorted.
+
+11. In the `main` function, a vector of integers `numbers` is initialized with some values.
+
+12. The elements of the vector are printed before sorting.
+
+13. The `parallelBubbleSort` function is called with the `numbers` vector as an argument 
+to perform the parallel sorting.
+
+14. The elements of the vector are printed after sorting.
+
+15. Finally, the `main` function returns 0, indicating successful execution.
+
+The parallelization in this code can potentially provide a performance improvement compared 
+to the sequential version of Bubble Sort when dealing with large arrays. 
+However, it's important to note that Bubble Sort itself is not the most efficient sorting 
+algorithm, especially for large arrays, and there are more efficient alternatives available.

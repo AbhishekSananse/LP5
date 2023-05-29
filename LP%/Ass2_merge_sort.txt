@@ -1,0 +1,145 @@
+#include <iostream>
+#include <vector>
+#include <omp.h>
+void merge(std::vector<int>& arr, int left, int mid, int right) {
+ int i, j, k;
+ int n1 = mid - left + 1;
+ int n2 = right - mid;
+ std::vector<int> leftArr(n1), rightArr(n2);
+ for (i = 0; i < n1; i++)
+ leftArr[i] = arr[left + i];
+ for (j = 0; j < n2; j++)
+ rightArr[j] = arr[mid + 1 + j];
+ i = 0;
+ j = 0;
+ k = left;
+ while (i < n1 && j < n2) {
+ if (leftArr[i] <= rightArr[j]) {
+ arr[k] = leftArr[i];
+ i++;
+ } else {
+ arr[k] = rightArr[j];
+ j++;
+ }
+ k++;
+ }
+ while (i < n1) {
+ arr[k] = leftArr[i];
+ i++;
+ k++;
+ }
+ while (j < n2) {
+ arr[k] = rightArr[j];
+ j++;
+ k++;
+ }
+}
+void parallelMergeSort(std::vector<int>& arr, int left, int right) {
+ if (left < right) {
+ int mid = left + (right - left) / 2;
+ #pragma omp parallel sections
+ {
+ #pragma omp section
+ {
+ parallelMergeSort(arr, left, mid);
+ }
+ #pragma omp section
+ {
+ parallelMergeSort(arr, mid + 1, right);
+ }
+ }
+ merge(arr, left, mid, right);
+ }
+}
+int main() {
+ std::vector<int> numbers = {5, 2, 8, 12, 3};
+ std::cout << "Before sorting: ";
+ for (int num : numbers) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl;
+ parallelMergeSort(numbers, 0, numbers.size() - 1);
+ std::cout << "After sorting: ";
+ for (int num : numbers) {
+ std::cout << num << " ";
+ }
+ std::cout << std::endl;
+ return 0;
+}
+
+
+
+
+
+
+
+The provided code implements a parallel version of the Merge Sort algorithm 
+using OpenMP for parallelization. Here's a breakdown of the code:
+
+1. The necessary header files, including `<iostream>`, `<vector>`, and `<omp.h>`, 
+are included.
+
+2. The `merge` function is defined to merge two subarrays of the given vector `arr`. 
+It takes the array, the left index of the first subarray, the middle index, 
+and the right index of the second subarray as arguments.
+
+3. The sizes of the two subarrays are computed using the given indices.
+
+4. Two temporary vectors, `leftArr` and `rightArr`, are created to store the elements
+ of the subarrays.
+
+5. The elements of the subarrays are copied from the main array into the temporary vectors.
+
+6. Three indices, `i`, `j`, and `k`, are initialized to 0, which will be used for 
+merging the subarrays.
+
+7. A `while` loop is used to compare elements from both subarrays and merge them into 
+the main array. The loop continues as long as there are elements remaining in both subarrays.
+
+8. If an element in the `leftArr` is less than or equal to the corresponding element in 
+the `rightArr`, it is placed in the main array at index `k`, and the indices `i` and `k` 
+are incremented.
+
+9. If an element in the `leftArr` is greater than the corresponding element in the `rightArr`, 
+the element from the `rightArr` is placed in the main array at index `k`, and the indices `j` 
+and `k` are incremented.
+
+10. After the `while` loop, if there are any remaining elements in the `leftArr`, 
+they are copied to the main array.
+
+11. Similarly, if there are any remaining elements in the `rightArr`, they are copied 
+to the main array.
+
+12. The `parallelMergeSort` function is defined to perform the parallel version of the 
+Merge Sort algorithm. It takes the array, the left index, and the right index as arguments.
+
+13. If the left index is less than the right index (indicating there are more than one 
+element to sort), the function proceeds with sorting.
+
+14. Inside the function, the midpoint index is calculated.
+
+15. The `#pragma omp parallel sections` directive is used to parallelize the execution
+ of the following blocks.
+
+16. The first section performs the `parallelMergeSort` on the left half of the array.
+
+17. The second section performs the `parallelMergeSort` on the right half of the array.
+
+18. Once the two halves are sorted, the `merge` function is called to merge the sorted halves.
+
+19. In the `main` function, a vector of integers `numbers` is initialized with some values.
+
+20. The elements of the vector are printed before sorting.
+
+21. The `parallelMergeSort` function is called with the `numbers` vector, the left index (0), 
+and the right index (numbers.size() - 1) to perform the parallel sorting.
+
+22. The elements of the vector are printed after sorting.
+
+23. Finally, the `main` function returns 0, indicating successful execution.
+
+The parallelization in this code can provide a performance improvement compared to the 
+sequential version of Merge Sort when dealing with large arrays. By splitting the array 
+and sorting the halves concurrently, the sorting process can be accelerated. 
+However, it's important to note that the efficiency of parallelization depends on the 
+number of available processor cores and the size of the array.
